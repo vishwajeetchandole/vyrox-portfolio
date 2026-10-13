@@ -123,7 +123,7 @@ export const teamMembers = [
       linkedin: '#',
       portfolio: '#',
     },
-    initials: 'MS',
+    initials: 'AW',
   },
   {
     slug: 'prathmesh',
@@ -161,7 +161,7 @@ export const teamMembers = [
       linkedin: '#',
       portfolio: '#',
     },
-    initials: 'RV',
+    initials: 'PK',
   },
 ];
 
