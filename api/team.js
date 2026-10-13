@@ -215,9 +215,9 @@ export default async function handler(request, response) {
       return respond(response, error.status, { error: error.message })
     }
     console.error('Could not update VYROX team profiles.', error)
-    const detail = error instanceof GitHubApiError
-      ? ` ${error.message}`
-      : ' Check the GitHub/Vercel backend configuration and try again.'
-    return respond(response, 502, { error: `Could not save the shared profiles.${detail}` })
+    const detail = error instanceof Error ? error.message.slice(0, 500) : 'Unknown server error.'
+    return respond(response, 502, {
+      error: `Could not save the shared profiles. ${detail} Check the GitHub/Vercel backend configuration and try again.`,
+    })
   }
 }
