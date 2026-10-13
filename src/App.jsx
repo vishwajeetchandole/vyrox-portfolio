@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
   ArrowRight,
@@ -186,12 +186,12 @@ function HomePage({ teamMembers, theme, onToggleTheme }) {
 
       <main className="relative z-10">
         <section id="home" className="mx-auto max-w-7xl px-4 pb-16 pt-12 sm:px-6 lg:px-8 lg:pb-24 lg:pt-20">
-          <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">
-            <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }}>
+          <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+            <motion.div initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: 'easeOut' }} className="min-w-0">
               <div className="mb-7 flex flex-wrap items-center gap-4">
                 <div className="soft-pill inline-flex items-center gap-3 rounded-full border border-white/10 bg-[#120B1B]/80 p-2 pr-4 shadow-[0_0_30px_rgba(139,92,246,0.12)]">
                   <img src={siteConfig.eventBadge} alt="Triwizathon 2026 logo" className="h-12 w-12 rounded-2xl border border-white/10 bg-[#170B2E]/80 object-cover" />
-                  <div className="text-left">
+                  <div className="min-w-0 text-left">
                     <p className="text-[10px] uppercase tracking-[0.26em] text-[#A6A0B5]">Triwizathon 2026</p>
                     <p className="mt-1 text-[10px] uppercase tracking-[0.22em] text-violet-100">Sanjay Ghodawat University</p>
                   </div>
@@ -258,7 +258,7 @@ function HomePage({ teamMembers, theme, onToggleTheme }) {
               </motion.div>
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.25, ease: 'easeOut' }} className="relative flex min-h-[420px] items-center justify-center">
+            <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.25, ease: 'easeOut' }} className="relative flex min-h-[420px] min-w-0 items-center justify-center">
               <div className="hero-orb floating-orb" aria-hidden="true" />
               <div className="absolute inset-6 rounded-[2rem] border border-violet-300/10 bg-white/[0.02] backdrop-blur-sm" />
               <div className="orb-panel relative z-10 w-full max-w-md rounded-[2rem] border border-violet-300/10 bg-[#120B1C]/80 p-6 shadow-[0_0_60px_rgba(139,92,246,0.2)]">
@@ -669,18 +669,18 @@ function ProfilePage({ teamMembers, theme, onToggleTheme }) {
       <header className="border-b border-white/10 bg-[#07060B]/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <Link to="/" className="font-display text-xl tracking-[0.26em] text-white">VYROX</Link>
-          <div className="flex items-center gap-3">
-            <Link to="/" className="inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.2em] text-violet-100 transition hover:text-white">
-              <ChevronLeft size={16} /> Back to VYROX
+          <div className="flex items-center gap-1 sm:gap-3">
+            <Link to="/" aria-label="Back to VYROX" className="inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.2em] text-violet-100 transition hover:text-white">
+              <ChevronLeft size={16} /> <span className="hidden sm:inline">Back to VYROX</span>
             </Link>
             <ThemeToggle theme={theme} onToggle={onToggleTheme} />
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-14">
-        <section aria-labelledby="member-name" className="grid items-center gap-8 rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(24,15,38,0.96),rgba(12,9,19,0.94))] p-4 shadow-[0_24px_80px_rgba(88,63,130,0.14)] sm:p-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-12 lg:p-8">
-          <div className="relative overflow-hidden rounded-[1.5rem] border border-violet-300/15 bg-[radial-gradient(circle_at_top,_rgba(192,132,252,0.32),_rgba(17,10,27,0.9)_54%)] p-3">
+      <main className="mx-auto max-w-7xl px-4 pb-28 pt-8 sm:px-6 lg:px-8 lg:pb-28 lg:pt-14">
+        <section aria-labelledby="member-name" className="grid items-center gap-8 rounded-[2rem] border border-white/10 bg-[linear-gradient(135deg,rgba(24,15,38,0.96),rgba(12,9,19,0.94))] p-4 shadow-[0_24px_80px_rgba(88,63,130,0.14)] sm:p-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-12 lg:p-8">
+          <div className="relative min-w-0 overflow-hidden rounded-[1.5rem] border border-violet-300/15 bg-[radial-gradient(circle_at_top,_rgba(192,132,252,0.32),_rgba(17,10,27,0.9)_54%)] p-3">
             <div className="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[1.15rem] border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_rgba(7,6,11,0.2))] text-7xl font-semibold tracking-[0.18em] text-white/90 sm:aspect-[5/4] lg:aspect-[4/5]">
               {member.image ? (
                 <img src={member.image} alt={`Photo of ${member.name}`} className="h-full w-full object-cover" />
@@ -690,7 +690,7 @@ function ProfilePage({ teamMembers, theme, onToggleTheme }) {
             </div>
           </div>
 
-          <div className="py-2 lg:py-5">
+          <div className="min-w-0 py-2 lg:py-5">
             <p className="inline-flex rounded-full border border-violet-300/20 bg-violet-500/10 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.2em] text-violet-100">{member.role}</p>
             <h1 id="member-name" className="mt-5 font-display text-4xl font-semibold tracking-[-0.07em] text-white sm:text-5xl lg:text-6xl">{member.name}</h1>
             <p className="mt-3 text-lg text-[#DCD4EE] sm:text-xl">{member.title}</p>
@@ -731,12 +731,12 @@ function ProfilePage({ teamMembers, theme, onToggleTheme }) {
           </div>
         </section>
 
-        <nav aria-label="Member profile sections" className="sticky top-[73px] z-30 -mx-4 mt-6 border-y border-white/10 bg-[#07060B]/90 px-4 py-3 backdrop-blur-xl sm:mx-0 sm:rounded-2xl sm:border sm:px-4">
-          <div className="flex gap-2 overflow-x-auto">
+        <nav aria-label="Member profile sections" className="profile-section-nav fixed bottom-4 left-1/2 z-40 w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-2xl border border-white/10 bg-[#100B18]/95 p-2 shadow-[0_12px_40px_rgba(0,0,0,0.4)] backdrop-blur-xl">
+          <div className="profile-section-nav__items flex gap-2 overflow-x-auto">
             {[
+              { label: 'About', href: '#profile-about' },
               { label: 'Projects', href: '#profile-projects' },
               { label: 'Achievements & certificates', href: '#profile-recognition' },
-              { label: 'About', href: '#profile-about' },
             ].map((item) => (
               <a
                 key={item.href}
@@ -750,39 +750,23 @@ function ProfilePage({ teamMembers, theme, onToggleTheme }) {
         </nav>
 
         <div className="mt-12 space-y-12 sm:mt-16 sm:space-y-16">
-          {['projects', 'achievements'].map((section) => renderSection(section))}
-
           <section id="profile-about" className="scroll-mt-36">
             <div className="mb-6">
               <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-violet-200/80">More about the member</p>
-              <h2 className="mt-2 font-display text-3xl font-semibold tracking-[-0.05em] text-white sm:text-4xl">About &amp; experience</h2>
+              <h2 className="mt-2 font-display text-3xl font-semibold tracking-[-0.05em] text-white sm:text-4xl">About</h2>
             </div>
-            <div className="grid gap-5 lg:grid-cols-2">
-              <article className="rounded-[1.5rem] border border-white/10 bg-[#100B18]/85 p-6 sm:p-7">
-                <h3 className="font-display text-xl font-semibold text-white">About me</h3>
-                <p className="mt-4 text-sm leading-7 text-[#A6A0B5]">{member.aboutMe}</p>
-                <h4 className="mt-7 text-[10px] font-medium uppercase tracking-[0.25em] text-violet-200/80">Core strengths</h4>
-                <ul className="mt-4 flex flex-wrap gap-2">
-                  {member.strengths.map((strength) => (
-                    <li key={strength} className="rounded-full border border-violet-300/15 bg-violet-500/[0.07] px-3 py-1.5 text-xs text-[#D9D4ED]">{strength}</li>
-                  ))}
-                </ul>
-              </article>
-              <article className="rounded-[1.5rem] border border-white/10 bg-[#100B18]/85 p-6 sm:p-7">
-                <h3 className="font-display text-xl font-semibold text-white">Experience</h3>
-                {member.experience.length ? (
-                  <ul className="mt-5 space-y-4">
-                    {member.experience.map((item) => (
-                      <li key={item} className="flex gap-3 text-sm leading-7 text-[#D9D4ED]">
-                        <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-violet-300" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : <p className="mt-4 text-sm text-[#A6A0B5]">No experience added yet.</p>}
-              </article>
-            </div>
+            <article className="rounded-[1.5rem] border border-white/10 bg-[#100B18]/85 p-6 sm:p-7">
+              <p className="text-sm leading-7 text-[#A6A0B5]">{member.aboutMe}</p>
+              <h3 className="mt-7 text-[10px] font-medium uppercase tracking-[0.25em] text-violet-200/80">Core strengths</h3>
+              <ul className="mt-4 flex flex-wrap gap-2">
+                {member.strengths.map((strength) => (
+                  <li key={strength} className="rounded-full border border-violet-300/15 bg-violet-500/[0.07] px-3 py-1.5 text-xs text-[#D9D4ED]">{strength}</li>
+                ))}
+              </ul>
+            </article>
           </section>
+
+          {['projects', 'achievements'].map((section) => renderSection(section))}
         </div>
 
         <div className="mt-16 flex flex-col gap-4 border-t border-white/10 pt-8 sm:flex-row sm:items-center sm:justify-between">
@@ -856,8 +840,11 @@ function AppShell() {
     }
   }, [])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.dataset.theme = theme
+  }, [theme])
+
+  useEffect(() => {
     window.localStorage.setItem('vyrox-theme', theme)
   }, [theme])
 
@@ -865,18 +852,26 @@ function AppShell() {
     setTheme((currentTheme) => currentTheme === 'dark' ? 'light' : 'dark')
   }
 
-  async function authenticateEditor(password) {
-    const response = await fetch('/api/team', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${password}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ action: 'authenticate' }),
-    })
-    const result = await response.json().catch(() => ({}))
-    if (!response.ok) {
-      throw new Error(result.error || 'Could not authenticate with the shared profile service.')
+  async function authenticateEditor(username, password) {
+    const expectedUsername = 'member'
+
+    if (username !== expectedUsername || !password) {
+      throw new Error('Incorrect username or password.')
+    }
+
+    if (backendReady) {
+      const response = await fetch('/api/team', {
+        method: 'POST',
+        headers: {
+          Authorization: Bearer ,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ action: 'authenticate' }),
+      })
+      const result = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        throw new Error(result.error || 'Could not authenticate with the shared profile service.')
+      }
     }
 
     window.sessionStorage.setItem('vyrox-editor-token', password)
@@ -949,18 +944,20 @@ function AppShell() {
           <Route path="/team/:memberSlug" element={<ProfilePage teamMembers={teamMembers} theme={theme} onToggleTheme={toggleTheme} />} />
           <Route
             path="/admin"
-            element={(
-              <AdminPage
-                members={teamMembers}
-                onSave={persistTeamMembers}
-                theme={theme}
-                onToggleTheme={toggleTheme}
-                backendReady={backendReady}
-                editorToken={editorToken}
-                onAuthenticate={authenticateEditor}
-                onLogout={logoutEditor}
-              />
-            )}
+            element={backendReady === null
+              ? <main className="min-h-screen bg-[#07060B] p-8 text-sm text-[#D9D4ED]">Connecting to the shared profile service…</main>
+              : (
+                <AdminPage
+                  members={teamMembers}
+                  onSave={persistTeamMembers}
+                  theme={theme}
+                  onToggleTheme={toggleTheme}
+                  backendReady={backendReady}
+                  editorToken={editorToken}
+                  onAuthenticate={authenticateEditor}
+                  onLogout={logoutEditor}
+                />
+              )}
           />
         </Routes>
       </AnimatePresence>

@@ -154,6 +154,7 @@ export default function AdminPage({
   const [draft, setDraft] = useState(selectedMember)
   const [isDirty, setIsDirty] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
+  const [username, setUsername] = useState('member')
   const [password, setPassword] = useState('')
   const [isAuthenticating, setIsAuthenticating] = useState(false)
   const [notice, setNotice] = useState('')
@@ -249,6 +250,7 @@ export default function AdminPage({
   }
 
   function selectMember(event) {
+    if (isSaving) return
     const nextSlug = event.target.value
     if (isDirty && !window.confirm('Discard unsaved changes for this member?')) return
     setDraft(members.find((member) => member.slug === nextSlug))
@@ -287,7 +289,7 @@ export default function AdminPage({
     setIsAuthenticating(true)
     setError('')
     try {
-      await onAuthenticate(password)
+      await onAuthenticate(username, password)
       setPassword('')
     } catch (authError) {
       setError(authError.message || 'Could not sign in to the shared profile editor.')
@@ -335,7 +337,7 @@ export default function AdminPage({
   async function importBackup(event) {
     const [file] = event.target.files || []
     event.target.value = ''
-    if (!file) return
+    if (!file || isSaving) return
     if (isDirty && !window.confirm('Discard unsaved changes and load this backup?')) return
 
     try {
@@ -375,11 +377,7 @@ export default function AdminPage({
     }
   }
 
-  if (backendReady === null) {
-    return <main className="min-h-screen bg-[#07060B] p-8 text-sm text-[#D9D4ED]">Connecting to the shared profile service…</main>
-  }
-
-  if (backendReady && !editorToken) {
+  if (!editorToken) {
     return (
       <main className="min-h-screen bg-[#07060B] px-4 py-8 text-white sm:px-6 lg:px-8">
         <div className="mx-auto max-w-lg rounded-[1.5rem] border border-white/10 bg-[#100B18]/80 p-6 sm:p-8">
@@ -389,11 +387,22 @@ export default function AdminPage({
           <p className="text-[10px] uppercase tracking-[0.32em] text-violet-200/80">VYROX team admin</p>
           <h1 className="mt-2 font-display text-3xl font-semibold tracking-[-0.05em]">Sign in to edit profiles</h1>
           <p className="mt-3 text-sm leading-6 text-[#A6A0B5]">
-            Enter the shared editor password provided by the site owner. Your changes will be committed to the project and redeployed.
+            Use the site admin credentials to manage the shared team profiles.
           </p>
           <form className="mt-6 space-y-4" onSubmit={authenticate}>
             <label className="block text-xs font-medium text-[#D9D4ED]">
-              Editor password
+              Username
+              <input
+                autoComplete="username"
+                className={inputClass}
+                type="text"
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                required
+              />
+            </label>
+            <label className="block text-xs font-medium text-[#D9D4ED]">
+              Password
               <input
                 autoComplete="current-password"
                 className={inputClass}
@@ -440,11 +449,9 @@ export default function AdminPage({
             <button type="button" className={buttonClass} onClick={downloadBackup}>
               <Download size={14} /> Download backup
             </button>
-            {backendReady ? (
-              <button type="button" className={buttonClass} onClick={onLogout}>
-                Sign out
-              </button>
-            ) : null}
+            <button type="button" className={buttonClass} onClick={onLogout}>
+              Sign out
+            </button>
           </div>
         </header>
 
@@ -458,7 +465,7 @@ export default function AdminPage({
         <div className="mb-6 flex flex-wrap items-end gap-4 rounded-[1.5rem] border border-white/10 bg-[#100B18]/80 p-5">
           <label className="min-w-56 flex-1 text-xs font-medium text-[#D9D4ED]">
             Select member
-            <select className={inputClass} value={selectedSlug} onChange={selectMember}>
+            <select className={inputClass} value={selectedSlug} onChange={selectMember} disabled={isSaving}>
               {members.map((member) => <option key={member.slug} value={member.slug}>{member.name}</option>)}
             </select>
           </label>

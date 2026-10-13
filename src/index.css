@@ -35,6 +35,22 @@ body {
   min-height: 100vh;
 }
 
+.grid > * {
+  min-width: 0;
+}
+
+.profile-section-nav {
+  bottom: max(1rem, env(safe-area-inset-bottom));
+}
+
+.profile-section-nav__items {
+  scrollbar-width: none;
+}
+
+.profile-section-nav__items::-webkit-scrollbar {
+  display: none;
+}
+
 .font-display {
   font-family: 'Sora', sans-serif;
 }
@@ -282,24 +298,29 @@ html[data-theme='light'] [class*='border-violet-300/'] {
   border-color: rgba(124, 58, 237, 0.2) !important;
 }
 
-html[data-theme='light'] [class*='text-white'],
-html[data-theme='light'] [class*='text-[#F8F7FC]'],
-html[data-theme='light'] [class*='text-[#E5DDF9]'],
-html[data-theme='light'] [class*='text-[#DCD4EE]'],
-html[data-theme='light'] [class*='text-[#D5CEDF]'],
-html[data-theme='light'] [class*='text-[#D9D4ED]'],
-html[data-theme='light'] [class*='text-[#D9D5E8]'],
-html[data-theme='light'] [class*='text-[#D8D2EC]'] {
+html[data-theme='light'] [class~='text-white'],
+html[data-theme='light'] [class~='text-white/90'],
+html[data-theme='light'] [class~='text-[#F8F7FC]'],
+html[data-theme='light'] [class~='text-[#E5DDF9]'],
+html[data-theme='light'] [class~='text-[#E7E0F8]'],
+html[data-theme='light'] [class~='text-[#DCD4EE]'],
+html[data-theme='light'] [class~='text-[#D8D0EA]'],
+html[data-theme='light'] [class~='text-[#D5CEDF]'],
+html[data-theme='light'] [class~='text-[#D9D4ED]'],
+html[data-theme='light'] [class~='text-[#D9D5E8]'],
+html[data-theme='light'] [class~='text-[#D8D2EC]'] {
   color: #30263e !important;
 }
 
-html[data-theme='light'] [class*='text-[#A6A0B5]'],
-html[data-theme='light'] [class*='text-[#8C849B]'] {
+html[data-theme='light'] [class~='text-[#A6A0B5]'],
+html[data-theme='light'] [class~='text-[#8C849B]'] {
   color: #71677f !important;
 }
 
-html[data-theme='light'] [class*='text-violet-100'],
-html[data-theme='light'] [class*='text-violet-200'] {
+html[data-theme='light'] [class~='text-violet-100'],
+html[data-theme='light'] [class~='text-violet-100/80'],
+html[data-theme='light'] [class~='text-violet-200'],
+html[data-theme='light'] [class~='text-violet-200/80'] {
   color: #6841a5 !important;
 }
 
