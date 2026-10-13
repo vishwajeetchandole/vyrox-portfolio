@@ -23,6 +23,7 @@ import AdminPage from './AdminPage'
 import { challengePillars, navItems, showcase, siteConfig, teamMembers as defaultTeamMembers, technologyStack } from './data/team'
 import { loadTeamMembers, saveTeamMembers } from './data/teamStorage'
 import { isMemberBackup } from './data/teamValidation'
+import { readApiResponse } from './data/apiResponse'
 import ThemeToggle from './ThemeToggle'
 
 function ScrollToTop() {
@@ -801,10 +802,7 @@ function AppShell() {
     async function loadSharedProfiles() {
       try {
         const statusResponse = await fetch('/api/team', { cache: 'no-store' })
-        const status = await statusResponse.json()
-        if (!statusResponse.ok) {
-          throw new Error(status.error || 'The shared profile service could not be reached.')
-        }
+        const status = await readApiResponse(statusResponse)
         if (!status.backendReady) {
           if (isCurrent) setBackendReady(false)
           return
@@ -872,10 +870,7 @@ function AppShell() {
         },
         body: JSON.stringify({ action: 'authenticate' }),
       })
-      const result = await response.json().catch(() => ({}))
-      if (!response.ok) {
-        throw new Error(result.error || 'Could not authenticate with the shared profile service.')
-      }
+      await readApiResponse(response, 'The shared profile service')
     }
 
     window.sessionStorage.setItem('vyrox-editor-token', editorPassword)
@@ -927,10 +922,7 @@ function AppShell() {
       },
       body: JSON.stringify(body),
     })
-    const result = await response.json().catch(() => ({}))
-    if (!response.ok) {
-      throw new Error(result.error || 'Could not save the shared team profiles.')
-    }
+    const result = await readApiResponse(response, 'The shared profile service')
     if (!isMemberBackup(result.members, defaultTeamMembers)) {
       throw new Error('The shared profile service returned invalid profile data.')
     }

@@ -13,9 +13,10 @@ class InvalidRequestError extends Error {
 }
 
 class GitHubApiError extends Error {
-  constructor(message) {
+  constructor(message, status) {
     super(message)
     this.name = 'GitHubApiError'
+    this.status = status
   }
 }
 
@@ -90,39 +91,86 @@ function githubFileUrl(configuration) {
   return `https://api.github.com/repos/${encodeURIComponent(configuration.owner)}/${encodeURIComponent(configuration.name)}/contents/${path}?ref=${encodeURIComponent(configuration.branch)}`
 }
 
-async function githubApiError(response, operation) {
-  let detail = ''
+function githubBlobUrl(configuration, sha) {
+  return `https://api.github.com/repos/${encodeURIComponent(configuration.owner)}/${encodeURIComponent(configuration.name)}/git/blobs/${encodeURIComponent(sha)}`
+}
+
+function githubHeaders(configuration) {
+  return {
+    Accept: 'application/vnd.github+json',
+    Authorization: `Bearer ${configuration.token}`,
+    'X-GitHub-Api-Version': '2022-11-28',
+  }
+}
+
+function safeDiagnostic(message, configuration) {
+  let diagnostic = typeof message === 'string' ? message : 'Unknown server error.'
+  for (const secret of [configuration?.token, configuration?.editorPassword]) {
+    if (secret) diagnostic = diagnostic.split(secret).join('[redacted]')
+  }
+  return diagnostic.slice(0, 500)
+}
+
+async function readGitHubResponse(response, operation, configuration) {
+  let responseText
   try {
-    const body = await response.json()
-    if (typeof body.message === 'string') {
-      detail = ` ${body.message.slice(0, 300)}`
-    }
-  } catch {
-    // GitHub may return an empty or non-JSON response for an API error.
+    responseText = await response.text()
+  } catch (error) {
+    throw new GitHubApiError(
+      `Could not read GitHub's ${operation} response (HTTP ${response.status}): ${safeDiagnostic(error?.message, configuration)}`,
+      response.status,
+    )
   }
 
-  return new GitHubApiError(`GitHub could not ${operation} the team profile file (HTTP ${response.status}).${detail}`)
+  let body
+  try {
+    body = JSON.parse(responseText)
+  } catch {
+    const responseState = responseText.trim() ? 'invalid JSON' : 'an empty response'
+    throw new GitHubApiError(
+      `GitHub returned ${responseState} while trying to ${operation} the team profile file (HTTP ${response.status}).`,
+      response.status,
+    )
+  }
+
+  if (!response.ok) {
+    const detail = typeof body?.message === 'string'
+      ? ` ${safeDiagnostic(body.message, configuration)}`
+      : ''
+    throw new GitHubApiError(
+      `GitHub could not ${operation} the team profile file (HTTP ${response.status}).${detail}`,
+      response.status,
+    )
+  }
+
+  return body
 }
 
 async function getCurrentProfiles(configuration) {
-  const response = await fetch(githubFileUrl(configuration), {
-    headers: {
-      Accept: 'application/vnd.github+json',
-      Authorization: `Bearer ${configuration.token}`,
-      'X-GitHub-Api-Version': '2022-11-28',
-    },
-  })
-
-  if (!response.ok) {
-    throw await githubApiError(response, 'read')
-  }
-
-  const file = await response.json()
-  if (typeof file.content !== 'string' || typeof file.sha !== 'string') {
+  const response = await fetch(githubFileUrl(configuration), { headers: githubHeaders(configuration) })
+  const file = await readGitHubResponse(response, 'read', configuration)
+  if (typeof file.sha !== 'string') {
     throw new Error('GitHub returned an invalid team profile file.')
   }
 
-  const members = JSON.parse(Buffer.from(file.content.replace(/\s/g, ''), 'base64').toString('utf8'))
+  let encodedContent = file.content
+  if (file.encoding === 'none' || typeof encodedContent !== 'string' || !encodedContent.trim()) {
+    const blobResponse = await fetch(githubBlobUrl(configuration, file.sha), {
+      headers: githubHeaders(configuration),
+    })
+    const blob = await readGitHubResponse(blobResponse, 'read the team profile blob', configuration)
+    if (blob.sha !== file.sha || blob.encoding !== 'base64' || typeof blob.content !== 'string') {
+      throw new GitHubApiError('GitHub returned an invalid team profile blob (HTTP 200).', 200)
+    }
+    encodedContent = blob.content
+  }
+
+  let members
+  try {
+    members = JSON.parse(Buffer.from(encodedContent.replace(/\s/g, ''), 'base64').toString('utf8'))
+  } catch {
+    throw new GitHubApiError('GitHub returned invalid JSON in the team profile file (HTTP 200).', 200)
+  }
   if (!isMemberBackup(members, defaultTeamMembers)) {
     throw new Error('The saved team profile file does not match the current team.')
   }
@@ -135,10 +183,8 @@ async function saveProfiles(configuration, members, sha) {
   const response = await fetch(githubFileUrl(configuration).split('?')[0], {
     method: 'PUT',
     headers: {
-      Accept: 'application/vnd.github+json',
-      Authorization: `Bearer ${configuration.token}`,
+      ...githubHeaders(configuration),
       'Content-Type': 'application/json',
-      'X-GitHub-Api-Version': '2022-11-28',
     },
     body: JSON.stringify({
       message: 'Update VYROX team profiles',
@@ -151,30 +197,29 @@ async function saveProfiles(configuration, members, sha) {
   if (response.status === 409) {
     return false
   }
-  if (!response.ok) {
-    throw await githubApiError(response, 'save')
-  }
+  await readGitHubResponse(response, 'save', configuration)
   return true
 }
 
 export default async function handler(request, response) {
-  const configuration = getConfiguration()
-
-  if (request.method === 'GET') {
-    return respond(response, 200, { backendReady: Boolean(configuration) })
-  }
-  if (request.method !== 'POST') {
-    response.setHeader('Allow', 'GET, POST')
-    return respond(response, 405, { error: 'Method not allowed.' })
-  }
-  if (!configuration) {
-    return respond(response, 503, { error: 'The shared profile backend is not configured on the host.' })
-  }
-  if (!isAuthorized(request, configuration.editorPassword)) {
-    return respond(response, 401, { error: 'The editor password is incorrect or has expired.' })
-  }
-
+  let configuration
   try {
+    configuration = getConfiguration()
+
+    if (request.method === 'GET') {
+      return respond(response, 200, { backendReady: Boolean(configuration) })
+    }
+    if (request.method !== 'POST') {
+      response.setHeader('Allow', 'GET, POST')
+      return respond(response, 405, { error: 'Method not allowed.' })
+    }
+    if (!configuration) {
+      return respond(response, 503, { error: 'The shared profile backend is not configured on the host.' })
+    }
+    if (!isAuthorized(request, configuration.editorPassword)) {
+      return respond(response, 401, { error: 'The editor password is incorrect or has expired.' })
+    }
+
     const body = await readRequestBody(request)
     if (body.action === 'authenticate') {
       return respond(response, 200, { authenticated: true })
@@ -214,10 +259,11 @@ export default async function handler(request, response) {
     if (error instanceof InvalidRequestError) {
       return respond(response, error.status, { error: error.message })
     }
-    console.error('Could not update VYROX team profiles.', error)
-    const detail = error instanceof Error ? error.message.slice(0, 500) : 'Unknown server error.'
-    return respond(response, 502, {
-      error: `Could not save the shared profiles. ${detail} Check the GitHub/Vercel backend configuration and try again.`,
+    const status = error instanceof GitHubApiError ? 502 : 500
+    const detail = safeDiagnostic(error?.message, configuration)
+    console.error('Could not update VYROX team profiles.', detail)
+    return respond(response, status, {
+      error: `Could not save the shared profiles. ${detail}`,
     })
   }
 }
