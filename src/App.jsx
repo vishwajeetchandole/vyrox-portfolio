@@ -261,30 +261,30 @@ function HomePage({ teamMembers, theme, onToggleTheme }) {
             <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.25, ease: 'easeOut' }} className="relative flex min-h-[420px] min-w-0 items-center justify-center">
               <div className="hero-orb floating-orb" aria-hidden="true" />
               <div className="absolute inset-6 rounded-[2rem] border border-violet-300/10 bg-white/[0.02] backdrop-blur-sm" />
-              <div className="orb-panel relative z-10 w-full max-w-md rounded-[2rem] border border-violet-300/10 bg-[#120B1C]/80 p-6 shadow-[0_0_60px_rgba(139,92,246,0.2)]">
-                <div className="flex items-center justify-between px-1 pb-5 text-[10px] uppercase tracking-[0.26em] text-[#A6A0B5]">
+              <div className="orb-panel relative z-10 box-border w-full max-w-md rounded-[2rem] border border-violet-300/10 bg-[#120B1C]/80 p-4 shadow-[0_0_60px_rgba(139,92,246,0.2)] sm:p-6">
+                <div className="flex items-center justify-between px-1 pb-4 text-[10px] uppercase tracking-[0.26em] text-[#A6A0B5] sm:pb-5">
                   <span>Collective energy</span>
                   <Sparkles size={16} className="text-violet-200" />
                 </div>
-                <div className="signal-grid grid grid-cols-3 gap-3">
+                <div className="signal-grid grid grid-cols-3 gap-2 sm:gap-3">
                   {teamMembers.map((member) => (
                     <motion.div
                       key={member.slug}
                       whileHover={{ y: -8, scale: 1.03 }}
-                      className="member-mini rounded-2xl border border-white/10 bg-[#1A1129] p-3 text-center"
+                      className="member-mini rounded-2xl border border-white/10 bg-[#1A1129] p-2 text-center sm:p-3"
                     >
-                      <div className="mb-3 flex h-16 items-center justify-center overflow-hidden rounded-xl bg-[radial-gradient(circle_at_top,_rgba(192,132,252,0.52),_rgba(139,92,246,0.22)_30%,_rgba(7,6,11,0))] text-lg font-semibold tracking-[0.15em] text-white">
+                      <div className="mb-2 flex h-14 items-center justify-center overflow-hidden rounded-xl bg-[radial-gradient(circle_at_top,_rgba(192,132,252,0.52),_rgba(139,92,246,0.22)_30%,_rgba(7,6,11,0))] text-lg font-semibold tracking-[0.15em] text-white sm:mb-3 sm:h-16">
                         {member.image ? (
                           <img src={member.image} alt={`Photo of ${member.name}`} className="h-full w-full object-cover" />
                         ) : (
                           member.initials
                         )}
                       </div>
-                      <p className="text-[9px] uppercase tracking-[0.2em] text-violet-100">{member.name}</p>
+                      <p className="break-words text-[8px] uppercase tracking-[0.1em] text-violet-100 sm:text-[9px] sm:tracking-[0.2em]">{member.name}</p>
                     </motion.div>
                   ))}
                 </div>
-                <div className="mt-6 rounded-2xl border border-violet-300/15 bg-violet-500/5 p-4 text-sm text-[#D5CEDF]">
+                <div className="mt-4 rounded-2xl border border-violet-300/15 bg-violet-500/5 p-3 text-sm text-[#D5CEDF] sm:mt-6 sm:p-4">
                   Three perspectives. One shared ambition for a meaningful build.
                 </div>
               </div>
