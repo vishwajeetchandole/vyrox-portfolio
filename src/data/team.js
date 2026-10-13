@@ -153,12 +153,13 @@ export const challengePillars = [
 ];
 
 export const technologyStack = [
-  { title: 'Programming Languages', items: ['JavaScript', 'TypeScript', 'Python', 'C++'] },
-  { title: 'Frontend Development', items: ['React', 'Vite', 'Tailwind', 'Framer Motion'] },
-  { title: 'Backend Development', items: ['Node.js', 'Express', 'REST APIs', 'Authentication'] },
-  { title: 'AI / Machine Learning', items: ['Prompt design', 'Model workflows', 'Automation', 'Data pipelines'] },
-  { title: 'Data & Databases', items: ['MongoDB', 'SQLite', 'Supabase', 'Analytics'] },
-  { title: 'Developer Tools', items: ['Git', 'Figma', 'Vercel', 'Postman'] },
+  { title: 'Programming Languages', items: ['JavaScript', 'TypeScript', 'Python', 'C++', 'Java', 'SQL'] },
+  { title: 'Frontend Development', items: ['React', 'Vite', 'Tailwind', 'Framer Motion', 'Next.js', 'HTML', 'CSS', 'Redux'] },
+  { title: 'Backend Development', items: ['Node.js', 'Express', 'REST APIs', 'Authentication', 'FastAPI', 'Django', 'GraphQL'] },
+  { title: 'AI / Machine Learning', items: ['Prompt design', 'Model workflows', 'Automation', 'Data pipelines', 'TensorFlow', 'PyTorch', 'Scikit-learn', 'LangChain'] },
+  { title: 'Data & Databases', items: ['MongoDB', 'SQLite', 'Supabase', 'Analytics', 'PostgreSQL', 'MySQL', 'Redis', 'Pandas'] },
+  { title: 'Developer Tools', items: ['Git', 'Figma', 'Vercel', 'Postman', 'GitHub', 'Docker', 'VS Code', 'Linux'] },
+  { title: 'Cloud & Deployment', items: ['AWS', 'Netlify', 'Render', 'CI/CD'] },
 ];
 
 export const showcase = [
