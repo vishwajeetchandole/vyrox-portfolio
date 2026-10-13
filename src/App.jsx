@@ -863,7 +863,7 @@ function AppShell() {
       const response = await fetch('/api/team', {
         method: 'POST',
         headers: {
-          Authorization: Bearer ,
+          Authorization: `Bearer ${password}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ action: 'authenticate' }),
