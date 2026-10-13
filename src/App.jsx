@@ -15,12 +15,11 @@ import {
   Rocket,
   Sparkles,
   Users,
-  Wand2,
   X,
 } from 'lucide-react'
 import { BrowserRouter, Link, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import AdminPage from './AdminPage'
-import { challengePillars, navItems, showcase, siteConfig, teamMembers as defaultTeamMembers, technologyStack } from './data/team'
+import { challengePillars, navItems, siteConfig, teamMembers as defaultTeamMembers, technologyStack } from './data/team'
 import { loadTeamMembers, saveTeamMembers } from './data/teamStorage'
 import { isMemberBackup } from './data/teamValidation'
 import { readApiResponse } from './data/apiResponse'
@@ -171,7 +170,11 @@ function SocialIcon({ label }) {
 }
 
 function HomePage({ teamMembers, theme, onToggleTheme }) {
-  const [activeProject, setActiveProject] = useState(showcase[0])
+  const [activeMemberSlug, setActiveMemberSlug] = useState(null)
+  const featuredProjects = teamMembers.flatMap((member) => (
+    member.projects?.[0] ? [{ ...member.projects[0], memberName: member.name, memberSlug: member.slug }] : []
+  ))
+  const activeProject = featuredProjects.find((project) => project.memberSlug === activeMemberSlug) || featuredProjects[0]
 
   const stats = [
     { value: '03', label: 'creative minds' },
@@ -427,61 +430,57 @@ function HomePage({ teamMembers, theme, onToggleTheme }) {
             description="Selected concepts that show how the team thinks, experiments, and builds with intent."
           />
 
-          <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-            <div className="space-y-4">
-              {showcase.map((item) => (
-                <button
-                  key={item.title}
-                  type="button"
-                  onClick={() => setActiveProject(item)}
-                  className={`showcase-card w-full rounded-[1.6rem] border p-5 text-left transition ${activeProject.title === item.title ? 'border-violet-300/40 bg-violet-500/10 shadow-[0_0_30px_rgba(139,92,246,0.18)]' : 'border-white/10 bg-[#120D1C]/90 hover:border-violet-300/30'}`}
-                >
-                  <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.26em] text-[#A6A0B5]">
-                    <span>{item.category}</span>
-                    <Wand2 size={15} className="text-violet-200" />
-                  </div>
-                  <h3 className="mt-5 font-display text-2xl text-white">{item.title}</h3>
-                  <p className="mt-3 text-sm leading-7 text-[#A6A0B5]">{item.summary}</p>
-                </button>
-              ))}
-            </div>
-
-            <motion.div
-              key={activeProject.title}
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-              className="showcase-spotlight rounded-[2rem] border border-violet-300/15 bg-[linear-gradient(135deg,_rgba(139,92,246,0.18),_rgba(9,6,17,0.9)_35%,_rgba(17,10,27,0.9)_100%)] p-6 md:p-8"
-            >
-              <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.28em] text-violet-100/80">
-                <span>{activeProject.category}</span>
-                <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1">Featured</span>
-              </div>
-              <h3 className="mt-6 font-display text-4xl text-white md:text-5xl">{activeProject.title}</h3>
-              <p className="mt-5 max-w-xl text-base leading-8 text-[#E5DDF9]">{activeProject.summary}</p>
-              <div className="mt-7 flex flex-wrap gap-2">
-                {activeProject.tags.map((tag) => (
-                  <span key={tag} className="rounded-full border border-violet-300/20 bg-violet-500/10 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-violet-100">
-                    {tag}
-                  </span>
+          {activeProject ? (
+            <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+              <div className="space-y-4">
+                {featuredProjects.map((project) => (
+                  <button
+                    key={project.memberSlug}
+                    type="button"
+                    onClick={() => setActiveMemberSlug(project.memberSlug)}
+                    aria-pressed={activeProject.memberSlug === project.memberSlug}
+                    className={`showcase-card w-full rounded-[1.6rem] border p-5 text-left transition ${activeProject.memberSlug === project.memberSlug ? 'border-violet-300/40 bg-violet-500/10 shadow-[0_0_30px_rgba(139,92,246,0.18)]' : 'border-white/10 bg-[#120D1C]/90 hover:border-violet-300/30'}`}
+                  >
+                    <p className="text-[10px] font-medium uppercase tracking-[0.26em] text-violet-200/80">{project.memberName}</p>
+                    <h3 className="mt-3 font-display text-2xl text-white">{project.title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-[#A6A0B5]">{project.description}</p>
+                  </button>
                 ))}
               </div>
-              <div className="mt-8 grid gap-4 md:grid-cols-3">
-                <div className="rounded-2xl border border-white/10 bg-black/10 p-4">
-                  <p className="text-[10px] uppercase tracking-[0.26em] text-[#A6A0B5]">Focus</p>
-                  <p className="mt-3 text-base font-medium text-white">Narrative clarity</p>
+
+              <motion.article
+                key={activeProject.memberSlug}
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, ease: 'easeOut' }}
+                className="showcase-spotlight overflow-hidden rounded-[2rem] border border-violet-300/15 bg-[linear-gradient(135deg,_rgba(139,92,246,0.18),_rgba(9,6,17,0.9)_35%,_rgba(17,10,27,0.9)_100%)]"
+              >
+                {activeProject.image ? (
+                  <img src={activeProject.image} alt={`${activeProject.title} project`} className="aspect-[16/8] w-full border-b border-white/10 object-cover" />
+                ) : (
+                  <div className="flex aspect-[16/8] items-center justify-center border-b border-white/10 bg-[radial-gradient(circle_at_top_right,_rgba(192,132,252,0.2),_transparent_45%),linear-gradient(135deg,#1c1229,#0c0913)] text-sm uppercase tracking-[0.2em] text-violet-100">
+                    {activeProject.memberName}&apos;s project
+                  </div>
+                )}
+                <div className="p-6 md:p-8">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-violet-100/80">{activeProject.memberName}</p>
+                  <h3 className="mt-4 font-display text-4xl text-white md:text-5xl">{activeProject.title}</h3>
+                  <p className="mt-4 max-w-xl text-base leading-8 text-[#E5DDF9]">{activeProject.description}</p>
+                  {(activeProject.techStack || activeProject.tags || []).length ? (
+                    <ul className="mt-6 flex flex-wrap gap-2" aria-label={`${activeProject.title} technologies`}>
+                      {(activeProject.techStack || activeProject.tags || []).map((technology) => (
+                        <li key={technology} className="rounded-full border border-violet-300/20 bg-violet-500/10 px-3 py-2 text-[10px] uppercase tracking-[0.2em] text-violet-100">
+                          {technology}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-black/10 p-4">
-                  <p className="text-[10px] uppercase tracking-[0.26em] text-[#A6A0B5]">Approach</p>
-                  <p className="mt-3 text-base font-medium text-white">Rapid iteration</p>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-black/10 p-4">
-                  <p className="text-[10px] uppercase tracking-[0.26em] text-[#A6A0B5]">Outcome</p>
-                  <p className="mt-3 text-base font-medium text-white">Memorable product</p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
+              </motion.article>
+            </div>
+          ) : (
+            <p className="rounded-[1.6rem] border border-dashed border-white/10 bg-white/[0.02] p-6 text-sm text-[#A6A0B5]">No projects added yet.</p>
+          )}
         </section>
 
         <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-20">
