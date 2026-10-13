@@ -852,18 +852,22 @@ function AppShell() {
     setTheme((currentTheme) => currentTheme === 'dark' ? 'light' : 'dark')
   }
 
-  async function authenticateEditor(username, password) {
+  async function authenticateEditor(username, editorPassword) {
     const expectedUsername = 'member'
 
-    if (username !== expectedUsername || !password) {
+    if (username !== expectedUsername || !editorPassword) {
       throw new Error('Incorrect username or password.')
+    }
+
+    if (!import.meta.env.DEV && !backendReady) {
+      throw new Error('The shared profile service is unavailable. Try again when it is connected.')
     }
 
     if (backendReady) {
       const response = await fetch('/api/team', {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${password}`,
+          Authorization: `Bearer ${editorPassword}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ action: 'authenticate' }),
@@ -874,8 +878,8 @@ function AppShell() {
       }
     }
 
-    window.sessionStorage.setItem('vyrox-editor-token', password)
-    setEditorToken(password)
+    window.sessionStorage.setItem('vyrox-editor-token', editorPassword)
+    setEditorToken(editorPassword)
   }
 
   function logoutEditor() {
@@ -890,10 +894,14 @@ function AppShell() {
   }
 
   async function persistTeamMembers(members, { memberSlug, baseMember, replaceAll } = {}) {
-    if (!backendReady) {
+    if (import.meta.env.DEV && !backendReady) {
       saveTeamMembers(members)
       setTeamMembers(members)
       return { members, remote: false }
+    }
+
+    if (!backendReady) {
+      throw new Error('The shared profile service is unavailable. Try again before saving.')
     }
 
     if (!editorToken) {
