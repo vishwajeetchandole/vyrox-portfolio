@@ -88,8 +88,8 @@ export const teamMembers = [
     "initials": "VC"
   },
   {
-    slug: 'mira-shah',
-    name: 'Mira Shah',
+    slug: 'ajinkya',
+    name: 'Ajinkya Walvekar',
     role: 'Product Builder',
     image: '',
     title: 'Frontend execution + product flow',
@@ -126,8 +126,8 @@ export const teamMembers = [
     initials: 'MS',
   },
   {
-    slug: 'rohan-verma',
-    name: 'Rohan Verma',
+    slug: 'prathmesh',
+    name: 'Prathmesh Kagale',
     role: 'Research & Execution Lead',
     image: '',
     title: 'AI workflows + execution systems',

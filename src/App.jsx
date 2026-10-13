@@ -261,7 +261,7 @@ function HomePage({ teamMembers, theme, onToggleTheme }) {
             <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.25, ease: 'easeOut' }} className="relative flex min-h-[420px] min-w-0 items-center justify-center">
               <div className="hero-orb floating-orb" aria-hidden="true" />
               <div className="absolute inset-6 rounded-[2rem] border border-violet-300/10 bg-white/[0.02] backdrop-blur-sm" />
-              <div className="orb-panel relative z-10 box-border w-full max-w-md rounded-[2rem] border border-violet-300/10 bg-[#120B1C]/80 p-4 shadow-[0_0_60px_rgba(139,92,246,0.2)] sm:p-6">
+              <div className="orb-panel relative z-10 box-border w-full max-w-md shrink-0 rounded-[2rem] border border-violet-300/10 bg-[#120B1C]/80 p-4 shadow-[0_0_60px_rgba(139,92,246,0.2)] sm:p-6">
                 <div className="flex items-center justify-between px-1 pb-4 text-[10px] uppercase tracking-[0.26em] text-[#A6A0B5] sm:pb-5">
                   <span>Collective energy</span>
                   <Sparkles size={16} className="text-violet-200" />
