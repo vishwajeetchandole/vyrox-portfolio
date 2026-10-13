@@ -334,7 +334,7 @@ export default function AdminPage({
     window.setTimeout(() => URL.revokeObjectURL(url), 0)
   }
 
-  async function importBackup(event) {
+  async function importBackup(event, singleMemberOnly = false) {
     const [file] = event.target.files || []
     event.target.value = ''
     if (!file || isSaving) return
@@ -347,6 +347,9 @@ export default function AdminPage({
       let saveOptions
 
       if (Array.isArray(importedData)) {
+        if (singleMemberOnly) {
+          throw new Error('Choose a profile file for the selected member, not a full-team backup.')
+        }
         if (!isMemberBackup(importedData, members)) {
           throw new Error('This backup does not contain valid information for the current team.')
         }
@@ -354,6 +357,9 @@ export default function AdminPage({
         saveOptions = { replaceAll: true }
         successMessage = 'Full-team backup imported and saved in this browser.'
       } else {
+        if (singleMemberOnly && importedData?.slug !== selectedSlug) {
+          throw new Error('This profile file is not for the selected member.')
+        }
         const existingMember = members.find((member) => member.slug === importedData?.slug)
         if (!existingMember || !isTeamMemberBackup(importedData)) {
           throw new Error('This file does not contain a valid profile for a current team member.')
@@ -473,6 +479,15 @@ export default function AdminPage({
           <button type="button" className={buttonClass} onClick={downloadMemberBackup}>
             <Download size={14} /> Export this member
           </button>
+          <label className={`${buttonClass} cursor-pointer`}>
+            <Upload size={14} /> Import this member
+            <input
+              className="sr-only"
+              type="file"
+              accept="application/json,.json"
+              onChange={(event) => importBackup(event, true)}
+            />
+          </label>
         </div>
 
         <form className="space-y-6" onSubmit={saveMember}>
