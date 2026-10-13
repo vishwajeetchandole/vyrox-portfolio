@@ -12,6 +12,13 @@ class InvalidRequestError extends Error {
   }
 }
 
+class GitHubApiError extends Error {
+  constructor(message) {
+    super(message)
+    this.name = 'GitHubApiError'
+  }
+}
+
 function getConfiguration() {
   const repository = process.env.GITHUB_REPOSITORY?.trim()
   const [owner, name, ...extra] = repository?.split('/') || []
@@ -83,6 +90,20 @@ function githubFileUrl(configuration) {
   return `https://api.github.com/repos/${encodeURIComponent(configuration.owner)}/${encodeURIComponent(configuration.name)}/contents/${path}?ref=${encodeURIComponent(configuration.branch)}`
 }
 
+async function githubApiError(response, operation) {
+  let detail = ''
+  try {
+    const body = await response.json()
+    if (typeof body.message === 'string') {
+      detail = ` ${body.message.slice(0, 300)}`
+    }
+  } catch {
+    // GitHub may return an empty or non-JSON response for an API error.
+  }
+
+  return new GitHubApiError(`GitHub could not ${operation} the team profile file (HTTP ${response.status}).${detail}`)
+}
+
 async function getCurrentProfiles(configuration) {
   const response = await fetch(githubFileUrl(configuration), {
     headers: {
@@ -93,7 +114,7 @@ async function getCurrentProfiles(configuration) {
   })
 
   if (!response.ok) {
-    throw new Error(`GitHub could not read the team profile file (HTTP ${response.status}).`)
+    throw await githubApiError(response, 'read')
   }
 
   const file = await response.json()
@@ -127,11 +148,11 @@ async function saveProfiles(configuration, members, sha) {
     }),
   })
 
-  if (response.status === 409 || response.status === 422) {
+  if (response.status === 409) {
     return false
   }
   if (!response.ok) {
-    throw new Error(`GitHub could not save the team profile file (HTTP ${response.status}).`)
+    throw await githubApiError(response, 'save')
   }
   return true
 }
@@ -194,6 +215,9 @@ export default async function handler(request, response) {
       return respond(response, error.status, { error: error.message })
     }
     console.error('Could not update VYROX team profiles.', error)
-    return respond(response, 502, { error: 'Could not save the shared profiles. Check the GitHub/Vercel backend configuration and try again.' })
+    const detail = error instanceof GitHubApiError
+      ? ` ${error.message}`
+      : ' Check the GitHub/Vercel backend configuration and try again.'
+    return respond(response, 502, { error: `Could not save the shared profiles.${detail}` })
   }
 }

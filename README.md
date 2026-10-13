@@ -33,3 +33,5 @@ The `/admin` editor can save member details, strengths, experience, projects, ac
 The GitHub token stays server-side. Updates to different profiles are merged against the latest repository version. If the same profile changed after a member opened it, their save is rejected with a conflict message instead of silently replacing newer details. Changes are visible on the site after the resulting Vercel deployment finishes.
 
 **Import backup** can import one member or replace the complete team. **Download backup** exports the current shared team. Uploaded images are compressed; the complete team JSON is limited to 3 MB. During local Vite development, the editor intentionally saves only in that browser because the Vercel API is not running.
+
+If a hosted save fails, the editor displays GitHub's HTTP status and API message when available. Check that `GITHUB_REPOSITORY` names this repository, `GITHUB_BRANCH` is the branch receiving production deployments, the token has **Contents: read and write** access, and the branch permits API commits. After changing Vercel environment variables, redeploy the project.
