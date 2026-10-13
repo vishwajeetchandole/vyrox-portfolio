@@ -108,7 +108,7 @@ function Header({ theme, onToggleTheme }) {
 
 function Footer({ teamMembers }) {
   return (
-    <footer className="border-t border-white/10 bg-[#090611]">
+    <footer className="relative z-10 border-t border-white/10 bg-[#090611]">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.4fr_0.8fr_0.8fr] lg:px-8">
         <div>
           <p className="font-display text-2xl tracking-[0.18em] text-white">{siteConfig.brand}</p>
