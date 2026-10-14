@@ -276,16 +276,16 @@ function HomePage({ teamMembers, theme, onToggleTheme }) {
                     <motion.div
                       key={member.slug}
                       whileHover={{ y: -8, scale: 1.03 }}
-                      className="member-mini rounded-2xl border border-white/10 bg-[#1A1129] p-2 text-center sm:p-3"
+                      className="member-mini flex items-center gap-3 rounded-2xl border border-white/10 bg-[#1A1129] p-2 text-left md:block md:p-3 md:text-center"
                     >
-                      <div className="mb-2 flex h-14 items-center justify-center overflow-hidden rounded-xl bg-[radial-gradient(circle_at_top,_rgba(192,132,252,0.52),_rgba(139,92,246,0.22)_30%,_rgba(7,6,11,0))] text-lg font-semibold tracking-[0.15em] text-white sm:mb-3 sm:h-16">
+                      <div className="mb-0 flex h-16 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[radial-gradient(circle_at_top,_rgba(192,132,252,0.52),_rgba(139,92,246,0.22)_30%,_rgba(7,6,11,0))] text-lg font-semibold tracking-[0.15em] text-white md:mb-3 md:h-16 md:w-full">
                         {member.image ? (
-                          <img src={member.image} alt={`Photo of ${member.name}`} className="h-full w-full object-cover" />
+                          <img src={member.image} alt={`Photo of ${member.name}`} className="h-full w-full object-contain" />
                         ) : (
                           member.initials
                         )}
                       </div>
-                      <p className="break-words text-[8px] uppercase tracking-[0.1em] text-violet-100 sm:text-[9px] sm:tracking-[0.2em]">{member.name}</p>
+                      <p className="break-words text-[9px] uppercase tracking-[0.15em] text-violet-100 md:text-[9px] md:tracking-[0.2em]">{member.name}</p>
                     </motion.div>
                   ))}
                 </div>
@@ -333,7 +333,7 @@ function HomePage({ teamMembers, theme, onToggleTheme }) {
                   <div className="overflow-hidden rounded-[1.5rem] border border-violet-300/15 bg-[radial-gradient(circle_at_top,_rgba(192,132,252,0.4),_rgba(17,10,27,0.9)_52%)] p-4">
                     <div className="flex h-64 items-center justify-center overflow-hidden rounded-[1.25rem] border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.1),_rgba(7,6,11,0.2))] text-5xl font-semibold tracking-[0.18em] text-white/90">
                       {member.image ? (
-                        <img src={member.image} alt={`Photo of ${member.name}`} className="h-full w-full object-cover" />
+                        <img src={member.image} alt={`Photo of ${member.name}`} className="h-full w-full object-contain" />
                       ) : (
                         member.initials
                       )}
@@ -684,7 +684,7 @@ function ProfilePage({ teamMembers, theme, onToggleTheme }) {
           <div className="relative min-w-0 overflow-hidden rounded-[1.5rem] border border-violet-300/15 bg-[radial-gradient(circle_at_top,_rgba(192,132,252,0.32),_rgba(17,10,27,0.9)_54%)] p-3">
             <div className="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[1.15rem] border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_rgba(7,6,11,0.2))] text-7xl font-semibold tracking-[0.18em] text-white/90 sm:aspect-[5/4] lg:aspect-[4/5]">
               {member.image ? (
-                <img src={member.image} alt={`Photo of ${member.name}`} className="h-full w-full object-cover" />
+                <img src={member.image} alt={`Photo of ${member.name}`} className="h-full w-full object-contain" />
               ) : (
                 member.initials
               )}
