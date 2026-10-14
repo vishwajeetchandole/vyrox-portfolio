@@ -6,7 +6,6 @@ import {
   BrainCircuit,
   ChevronLeft,
   ChevronRight,
-  ExternalLink,
   Globe,
   Mail,
   Layers3,
@@ -62,9 +61,6 @@ function Header({ theme, onToggleTheme }) {
               {item.label}
             </a>
           ))}
-          <Link to="/admin" className="nav-link text-[10px] font-medium uppercase tracking-[0.3em] text-violet-200 transition hover:text-white">
-            Admin
-          </Link>
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
         </nav>
 
@@ -94,9 +90,6 @@ function Header({ theme, onToggleTheme }) {
                 {item.label}
               </a>
             ))}
-            <Link to="/admin" className="text-[10px] font-medium uppercase tracking-[0.3em] text-violet-200" onClick={() => setMobileOpen(false)}>
-              Admin
-            </Link>
             <Link to="/" className="text-[10px] font-medium uppercase tracking-[0.3em] text-white" onClick={() => setMobileOpen(false)}>
               HOME
             </Link>
@@ -285,7 +278,6 @@ function HomePage({ teamMembers, theme, onToggleTheme }) {
                           member.initials
                         )}
                       </div>
-                      <p className="break-words text-[9px] uppercase tracking-[0.15em] text-violet-100 md:text-[9px] md:tracking-[0.2em]">{member.name}</p>
                     </motion.div>
                   ))}
                 </div>
@@ -311,65 +303,60 @@ function HomePage({ teamMembers, theme, onToggleTheme }) {
         <section id="team" className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-20">
           <SectionHeading
             eyebrow="Meet the team"
-            title="FOUR MINDS. DIFFERENT STRENGTHS."
-            description="Each member adds a distinct creative lens, technical instinct, and execution rhythm to the project."
+            title="THE PEOPLE BEHIND THE POSSIBLE."
+            description="A closer look at the minds bringing VYROX to life."
           />
 
-          <div className="grid gap-6 grid-cols-1 md:grid-cols-4">
-            {teamMembers.map((member, index) => (
-              <Link
-                key={member.slug}
-                to={`/team/${member.slug}`}
-                className="group block rounded-[2rem] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-300"
-              >
-                <motion.article
-                  initial={{ opacity: 0, y: 28 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 0.5, delay: index * 0.08 }}
-                  whileHover={{ y: -8, scale: 1.01 }}
-                  className="member-card rounded-[2rem] border border-white/10 bg-[#100B18]/80 p-4 shadow-[0_0_40px_rgba(139,92,246,0.06)]"
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            {teamMembers.map((member, index) => {
+              const [firstName, ...lastNameParts] = member.name.trim().split(/\s+/)
+
+              return (
+                <Link
+                  key={member.slug}
+                  to={`/team/${member.slug}`}
+                  className="team-profile-link group block rounded-[1.8rem] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-violet-300"
                 >
-                  <div className="overflow-hidden rounded-[1.5rem] border border-violet-300/15 bg-[radial-gradient(circle_at_top,_rgba(192,132,252,0.4),_rgba(17,10,27,0.9)_52%)] p-4">
-                    <div className="flex h-64 items-center justify-center overflow-hidden rounded-[1.25rem] border border-white/10 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.1),_rgba(7,6,11,0.2))] text-5xl font-semibold tracking-[0.18em] text-white/90">
+                  <motion.article
+                    initial={{ opacity: 0, y: 28 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.2 }}
+                    transition={{ duration: 0.5, delay: index * 0.07 }}
+                    whileHover={{ y: -7 }}
+                    className="team-profile-card member-card overflow-hidden rounded-[1.8rem] border border-white/10"
+                  >
+                    <div className="team-profile-card__portrait relative aspect-[4/3] overflow-hidden">
                       {member.image ? (
-                        <img src={member.image} alt={`Photo of ${member.name}`} className="h-full w-full object-contain" />
+                        <img src={member.image} alt={`Photo of ${member.name}`} className="h-full w-full object-cover" />
                       ) : (
-                        member.initials
+                        <div className="team-profile-card__fallback flex h-full w-full items-center justify-center font-display text-5xl font-semibold tracking-[0.12em] text-white/90" aria-label={`No profile photo available for ${member.name}`}>
+                          {member.initials}
+                        </div>
                       )}
+                      <span className="team-profile-card__index absolute left-4 top-4 rounded-full border border-white/20 px-3 py-1.5 text-[10px] font-medium tracking-[0.18em] text-white">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <span className="team-profile-card__arrow absolute bottom-4 right-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 text-white transition-transform duration-300 group-hover:rotate-45">
+                        <ArrowRight size={17} aria-hidden="true" />
+                      </span>
                     </div>
-                  </div>
 
-                  <div className="mt-5 flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-[10px] font-medium uppercase tracking-[0.28em] text-violet-200/80">{member.role}</p>
-                      <h3 className="mt-2 font-display text-3xl font-semibold text-white">{member.name}</h3>
+                    <div className="team-profile-card__details p-5 sm:p-6">
+                      <p className="team-profile-card__role text-[10px] font-medium uppercase tracking-[0.2em] text-violet-200/80">{member.role}</p>
+                      <h3 className="team-profile-card__name mt-3 font-display text-2xl font-semibold leading-[1.05] text-white">
+                        <span className="block">{firstName}</span>
+                        <span className="team-profile-card__surname mt-1 block">{lastNameParts.join(' ') || firstName}</span>
+                      </h3>
+                      <p className="team-profile-card__headline mt-3 text-sm leading-6 text-[#A6A0B5]">
+                        {member.title && member.title !== 'Profile details coming soon'
+                          ? member.title
+                          : 'Building the next big idea with VYROX.'}
+                      </p>
                     </div>
-                    <span className="rounded-full border border-violet-300/20 bg-violet-500/10 p-2 text-violet-100">
-                      <ArrowRight size={16} />
-                    </span>
-                  </div>
-
-                  <p className="mt-5 text-sm leading-7 text-[#A6A0B5]">{member.aboutMe}</p>
-
-                  <ul className="mt-5 space-y-2 text-sm text-[#D8D0EA]">
-                    {member.strengths.map((strength) => (
-                      <li key={strength} className="flex gap-2">
-                        <span className="mt-1 h-2 w-2 rounded-full bg-violet-300" />
-                        <span>{strength}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="mt-6 flex justify-between border-t border-white/10 pt-4">
-                    <span className="text-[10px] uppercase tracking-[0.24em] text-[#A6A0B5]">Creative profile</span>
-                    <span className="inline-flex items-center gap-2 text-[10px] font-medium uppercase tracking-[0.2em] text-violet-200 transition group-hover:text-white">
-                      Explore profile <ExternalLink size={12} />
-                    </span>
-                  </div>
-                </motion.article>
-              </Link>
-            ))}
+                  </motion.article>
+                </Link>
+              )
+            })}
           </div>
         </section>
 
