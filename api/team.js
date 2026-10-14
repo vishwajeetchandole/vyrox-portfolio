@@ -1,5 +1,5 @@
 import { timingSafeEqual, createHash } from 'node:crypto'
-import { teamMembers as defaultTeamMembers } from '../src/data/team.js'
+import { teamMembers as defaultTeamMembers } from '../src/data/teamMembers.js'
 import { isMemberBackup, isTeamMemberBackup } from '../src/data/teamValidation.js'
 
 const teamFilePath = 'public/team-members.json'

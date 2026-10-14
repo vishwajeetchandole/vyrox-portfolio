@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
+import { spawnSync } from 'node:child_process'
 import { createHash, randomBytes } from 'node:crypto'
 import { afterEach, test } from 'node:test'
-import { teamMembers } from '../src/data/team.js'
+import { teamMembers } from '../src/data/teamMembers.js'
 import handler from './team.js'
 
 const originalFetch = globalThis.fetch
@@ -55,6 +56,30 @@ afterEach(() => {
     if (value === undefined) delete process.env[name]
     else process.env[name] = value
   }
+})
+
+test('API module loads without importing frontend team modules or PNG assets', () => {
+  const loader = `
+export async function resolve(specifier, context, nextResolve) {
+  if (specifier.endsWith('.png')) {
+    throw new Error('API attempted to import a PNG asset.')
+  }
+  const resolved = await nextResolve(specifier, context)
+  if (resolved.url.endsWith('/src/data/team.js')) {
+    throw new Error('API attempted to import the frontend team module.')
+  }
+  return resolved
+}`
+  const result = spawnSync(process.execPath, [
+    '--no-warnings',
+    '--experimental-loader',
+    `data:text/javascript,${encodeURIComponent(loader)}`,
+    '--input-type=module',
+    '--eval',
+    `await import(${JSON.stringify(new URL('./team.js', import.meta.url).href)})`,
+  ], { encoding: 'utf8' })
+
+  assert.equal(result.status, 0, result.stderr)
 })
 
 function configureBackend() {
