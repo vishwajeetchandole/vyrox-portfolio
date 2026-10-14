@@ -271,7 +271,7 @@ function HomePage({ teamMembers, theme, onToggleTheme }) {
                   <span>Collective energy</span>
                   <Sparkles size={16} className="text-violet-200" />
                 </div>
-                <div className="signal-grid grid grid-cols-3 gap-2 sm:gap-3">
+                <div className="signal-grid grid grid-cols-1 gap-2 md:grid-cols-4 sm:gap-3">
                   {teamMembers.map((member) => (
                     <motion.div
                       key={member.slug}
@@ -315,7 +315,7 @@ function HomePage({ teamMembers, theme, onToggleTheme }) {
             description="Each member adds a distinct creative lens, technical instinct, and execution rhythm to the project."
           />
 
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-6 grid-cols-1 md:grid-cols-4">
             {teamMembers.map((member, index) => (
               <Link
                 key={member.slug}
