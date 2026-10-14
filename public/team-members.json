@@ -216,7 +216,14 @@
         ]
       }
     ],
-    "experience": [],
+    "experience": [
+      "Software Development – FlowML | Developed a visual AutoML platform with drag-and-drop workflows, dataset preprocessing, model training, and evaluation.",
+      "AI Project Development – Head-Controlled Mouse with Voice Assistant | Built an assistive technology application using Python, OpenCV, MediaPipe, and voice commands.",
+      "Web Development & Deployment | Worked on frontend development, backend integration, Firebase authentication, API connectivity, and deployment using GitHub and Vercel.",
+      "Internship – ByteTechno | Gained practical exposure to technology development, programming, and software project workflows.",
+      "Internship – MyJobGrow | Developed professional skills through internship experience, technical learning, and practical project-related activities.",
+      "ARC Club – Student Coordinator, K.I.T.'s College of Engineering | Supported student coordination and technical project activities."
+    ],
     "certificates": [],
     "links": {
       "email": "ajinkyawalvekar77@gmail.com",
