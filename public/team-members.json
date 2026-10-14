@@ -281,5 +281,26 @@
       "portfolio": ""
     },
     "initials": "PV"
+  },
+  {
+    "slug": "rahul",
+    "name": "Rahul Patil",
+    "role": "VYROX Team Member",
+    "title": "Profile details coming soon",
+    "aboutMe": "Profile details will be added soon.",
+    "intro": "More information about Rahul will be added soon.",
+    "strengths": [],
+    "achievements": [],
+    "projects": [],
+    "experience": [],
+    "certificates": [],
+    "links": {
+      "email": "",
+      "github": "",
+      "linkedin": "",
+      "portfolio": ""
+    },
+    "initials": "RP",
+    "image": ""
   }
 ]

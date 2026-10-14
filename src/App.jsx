@@ -290,7 +290,7 @@ function HomePage({ teamMembers, theme, onToggleTheme }) {
                   ))}
                 </div>
                 <div className="mt-4 rounded-2xl border border-violet-300/15 bg-violet-500/5 p-3 text-sm text-[#D5CEDF] sm:mt-6 sm:p-4">
-                  Three perspectives. One shared ambition for a meaningful build.
+                  Four perspectives. One shared ambition for a meaningful build.
                 </div>
               </div>
             </motion.div>
@@ -311,11 +311,11 @@ function HomePage({ teamMembers, theme, onToggleTheme }) {
         <section id="team" className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-20">
           <SectionHeading
             eyebrow="Meet the team"
-            title="THREE MINDS. DIFFERENT STRENGTHS."
+            title="FOUR MINDS. DIFFERENT STRENGTHS."
             description="Each member adds a distinct creative lens, technical instinct, and execution rhythm to the project."
           />
 
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
             {teamMembers.map((member, index) => (
               <Link
                 key={member.slug}
