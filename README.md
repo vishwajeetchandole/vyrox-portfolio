@@ -17,7 +17,7 @@ If you are developing a production application, we recommend using TypeScript wi
 
 ## Editing team profiles
 
-The `/admin` editor can save member details, strengths, experience, projects, achievements, certificates, and images. On the hosted site, profile updates are committed to `public/team-members.json` through the Vercel API. Each update triggers a Vercel deployment, and the site loads that shared file for all visitors.
+The `/admin` editor can save member details, strengths, experience, projects, achievements, certificates, and images. On the hosted site, profile updates are committed to `public/team-members.json` through the Vercel API. Each update triggers a Vercel deployment, and the site loads the shared profiles through that API.
 
 ### One-time hosted backend setup
 
@@ -30,7 +30,7 @@ The `/admin` editor can save member details, strengths, experience, projects, ac
    - `TEAM_EDITOR_PASSWORD`: a shared editor password of at least 16 characters. Give it only to the two members who will edit profiles.
 4. Redeploy once after setting the variables. Both members can then sign in at `/admin`, select their own profile, and save. A member save is merged with the latest profiles before the GitHub commit so separate members' edits do not overwrite one another.
 
-The GitHub token stays server-side. Updates to different profiles are merged against the latest repository version. If the same profile changed after a member opened it, their save is rejected with a conflict message instead of silently replacing newer details. Large profile files that GitHub omits from the Contents API response are read through the Git blob API using the returned blob SHA. Changes are visible on the site after the resulting Vercel deployment finishes.
+The GitHub token stays server-side. Updates to different profiles are merged against the latest repository version. If the same profile changed after a member opened it, their save is rejected with a conflict message instead of silently replacing newer details. Large profile files that GitHub omits from the Contents API response are read through the Git blob API using the returned blob SHA, both when loading profiles and when saving changes. Changes are visible on the site after the resulting Vercel deployment finishes.
 
 **Import backup** can import one member or replace the complete team. **Download backup** exports the current shared team. Uploaded images are compressed; the complete team JSON is limited to 3 MB. During local Vite development, the editor intentionally saves only in that browser because the Vercel API is not running.
 

@@ -807,13 +807,9 @@ function AppShell() {
           return
         }
 
-        const profilesResponse = await fetch('/team-members.json', { cache: 'no-store' })
-        if (!profilesResponse.ok) {
-          throw new Error(`Could not load the shared profiles (HTTP ${profilesResponse.status}).`)
-        }
-        const latestMembers = await profilesResponse.json()
+        const latestMembers = status.members
         if (!isMemberBackup(latestMembers, defaultTeamMembers)) {
-          throw new Error('The shared profile file is invalid or does not match this team.')
+          throw new Error('The shared profile service returned invalid profile data.')
         }
 
         if (isCurrent) {

@@ -207,7 +207,11 @@ export default async function handler(request, response) {
     configuration = getConfiguration()
 
     if (request.method === 'GET') {
-      return respond(response, 200, { backendReady: Boolean(configuration) })
+      if (!configuration) {
+        return respond(response, 200, { backendReady: false })
+      }
+      const current = await getCurrentProfiles(configuration)
+      return respond(response, 200, { backendReady: true, members: current.members })
     }
     if (request.method !== 'POST') {
       response.setHeader('Allow', 'GET, POST')
@@ -261,9 +265,10 @@ export default async function handler(request, response) {
     }
     const status = error instanceof GitHubApiError ? 502 : 500
     const detail = safeDiagnostic(error?.message, configuration)
-    console.error('Could not update VYROX team profiles.', detail)
+    const operation = request.method === 'GET' ? 'load' : 'update'
+    console.error(`Could not ${operation} VYROX team profiles.`, detail)
     return respond(response, status, {
-      error: `Could not save the shared profiles. ${detail}`,
+      error: `Could not ${operation === 'load' ? 'load' : 'save'} the shared profiles. ${detail}`,
     })
   }
 }
